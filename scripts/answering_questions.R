@@ -22,3 +22,4 @@ bom_data_temp_rf <- bom_data %>%
 
 bom_data_temp_rf 
 
+
