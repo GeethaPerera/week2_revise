@@ -52,10 +52,10 @@ month_lowest_temp_diff
 bom_stations_long <- gather(bom_stations,Station_number,value="value",2:21) # arrange the station numbers
 # in one column and all the other data in the next column
 bom_stations_long                           
-bom_stations_spread <- spread(bom_station_long, info, value="value") # to arrange other data into
+bom_stations_spread <- spread(bom_stations_long, info, value="value") # to arrange other data into
 # separate columns next to the station number column
 bom_stations_spread
-bom_stations_final <- mutate(bom_stations_spread,Station_number=as.numeric(station_number)) # to change data in the 
+bom_stations_final <- mutate(bom_stations_spread,Station_number=as.numeric(Station_number)) # to change data in the 
 # station number column to numeric values
 bom_stations_final
 
@@ -79,3 +79,37 @@ state_lowest_temp_diff
 # The state that showed the lowest average temperature difference is Queensland 
 #with a temperature difference of 7.36
 
+# question 4
+
+library(tidyverse) # had to run this again as I closed the session at the end of question 3
+# and started the session again
+
+bom_data <- read_csv("raw_data/BOM_data.csv")
+bom_data
+
+bom_stations <- read_csv("raw_data/BOM_stations.csv")
+bom_stations 
+
+bom_stations_long <- gather(bom_stations,Station_number,value="value",2:21) 
+bom_stations_long                           
+bom_stations_spread <- spread(bom_stations_long, info, value="value") 
+bom_stations_spread
+bom_stations_final <- mutate(bom_stations_spread,Station_number=as.numeric(Station_number))
+
+bom_stations_final
+
+bom_final <- full_join(bom_data,bom_stations_final)
+bom_final
+
+bom_solar_exposure <- bom_final %>% 
+  mutate(lon = as.numeric(lon), Solar_exposure = as.numeric(Solar_exposure)) %>% # to change values for 
+  #longitude and Solar_exposure to neumeric values
+  filter (Solar_exposure!="NA") %>% # after changing solar exposure values to neumeric
+  # the values with a '-' converted to NA
+  group_by(lon)%>% # to groups the longitudes together
+  summarise(average_solar_exposure=mean(Solar_exposure))%>% # to calculate averages for each longitude
+  arrange (average_Solar_exposure)
+bom_solar_exposure
+
+# the eastmost (highest longitude) 
+#weather station have the higher average solar exposure
