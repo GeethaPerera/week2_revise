@@ -109,6 +109,7 @@ bom_solar_exposure <- bom_final %>%
   group_by(lon)%>% # to groups the longitudes together
   summarise(average_solar_exposure=mean(Solar_exposure))%>% # to calculate averages for each longitude
   arrange (average_Solar_exposure)
+head(average_Solar_exposure)
 bom_solar_exposure
 
 # the eastmost (highest longitude) 
