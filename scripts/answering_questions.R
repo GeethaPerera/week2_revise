@@ -41,3 +41,41 @@ month_lowest_temp_diff
 
 # June was the month with lowest average daily temperature difference (8.74)
 
+# question 3
+
+# which state saw the lowest average daily temperature difference?
+
+# the station data is not in a tidy format 
+# as stations are listed in columns and the information on each station
+# are listed in rows
+
+bom_stations_long <- gather(bom_stations,Station_number,value="value",2:21) # arrange the station numbers
+# in one column and all the other data in the next column
+bom_stations_long                           
+bom_stations_spread <- spread(bom_station_long, info, value="value") # to arrange other data into
+# separate columns next to the station number column
+bom_stations_spread
+bom_stations_final <- mutate(bom_stations_spread,Station_number=as.numeric(station_number)) # to change data in the 
+# station number column to numeric values
+bom_stations_final
+
+bom_final <- full_join(bom_data,bom_stations_final)
+bom_final
+
+temp_diff_by_state <- bom_final %>% 
+  separate(Temp_min_max,into = c("t_min", "t_max"), sep="/")%>% 
+  filter(t_min != "-",t_max != "-") %>% 
+  mutate(t_min = as.numeric(t_min))%>% # need to convert values in these columns to numerics
+  mutate(t_max = as.numeric(t_max ))%>%
+  mutate(temp_difference = t_max-t_min) %>% # to calculate the temperature difference
+  group_by(state)
+temp_diff_by_state 
+
+state_lowest_temp_diff <- temp_diff_by_state %>% 
+  summarise(mean_temp_diff=mean(temp_difference))%>% # calculate the mean temperature difference
+  arrange(mean_temp_diff)
+state_lowest_temp_diff
+
+# The state that showed the lowest average temperature difference is Queensland 
+#with a temperature difference of 7.36
+
